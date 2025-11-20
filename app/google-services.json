@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "747751471856",
+    "project_id": "better-bagwork",
+    "storage_bucket": "better-bagwork.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:747751471856:android:a793cfcd787712ec076035",
+        "android_client_info": {
+          "package_name": "com.example.betterbagwork"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2GujM2KalmPj9obJ2PIPd9og1wC-YwaY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
