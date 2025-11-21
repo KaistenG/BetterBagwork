@@ -4,43 +4,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="24dp"
+    android:gravity="center">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="BetterBagwork"
-        android:textSize="24sp"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginBottom="16dp"/>
-
-    <Button
-        android:id="@+id/btnCreateCombination"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Neue Kombination erstellen"
         android:layout_marginBottom="16dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Deine Kombinationen:"
+        android:text="Wähle einen Bereich:"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
+        android:gravity="center"
+        android:layout_marginBottom="32dp"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewCombinations"
+    <!-- Kombinationen Button -->
+    <Button
+        android:id="@+id/btnCombinations"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_height="80dp"
+        android:text="Kombinationen"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
 
+    <!-- Workouts Button -->
+    <Button
+        android:id="@+id/btnWorkouts"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="Workouts"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Logout Button (kleiner, am unteren Rand) -->
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Logout"
-        android:layout_marginTop="16dp"/>
+        style="?android:attr/buttonBarButtonStyle"/>
 
 </LinearLayout>
