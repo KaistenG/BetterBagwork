@@ -34,15 +34,19 @@
             android:layout_height="1dp"/>
     </LinearLayout>
 
-    <!-- Platzhalter Text -->
-    <TextView
-        android:id="@+id/txtPlaceholder"
+    <!-- Button: Neues Workout -->
+    <Button
+        android:id="@+id/btnCreateWorkout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Workout-Funktion kommt bald..."
-        android:textSize="18sp"
-        android:gravity="center"
-        android:layout_marginTop="48dp"
-        android:padding="24dp"/>
+        android:text="+ Neues Workout"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- RecyclerView für Workouts -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewWorkouts"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
 </LinearLayout>
