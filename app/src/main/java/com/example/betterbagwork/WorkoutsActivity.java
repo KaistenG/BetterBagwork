@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WorkoutsActivity extends AppCompatActivity {
@@ -60,10 +61,7 @@ public class WorkoutsActivity extends AppCompatActivity {
         workoutAdapter.setOnWorkoutClickListener(new WorkoutAdapter.OnWorkoutClickListener() {
             @Override
             public void onWorkoutClick(Workout workout) {
-                // TODO: Später - Workout starten (Timer-Activity)
-                Toast.makeText(WorkoutsActivity.this,
-                        "Workout-Start kommt bald!",
-                        Toast.LENGTH_SHORT).show();
+                startWorkoutTimer(workout);
             }
 
             @Override
@@ -114,5 +112,17 @@ public class WorkoutsActivity extends AppCompatActivity {
                         // Fehler wird bereits im Manager angezeigt
                     }
                 });
+    }
+
+    private void startWorkoutTimer(Workout workout) {
+        Intent intent = new Intent(WorkoutsActivity.this, WorkoutTimerActivity.class);
+        intent.putExtra("workoutId", workout.getId());
+        intent.putExtra("workoutName", workout.getName());
+        intent.putStringArrayListExtra("combinationIds", new ArrayList<>(workout.getCombinationIds()));
+        intent.putExtra("roundTimeSeconds", workout.getRoundTimeSeconds());
+        intent.putExtra("numberOfRounds", workout.getNumberOfRounds());
+        intent.putExtra("announcementInterval", workout.getAnnouncementInterval());
+        intent.putExtra("restTimeSeconds", workout.getRestTimeSeconds());
+        startActivity(intent);
     }
 }

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:background="#1a1a1a">
+
+    <!-- Status (TRAINING / PAUSE) -->
+    <TextView
+        android:id="@+id/txtStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TRAINING"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_green_dark"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Große Timer-Anzeige -->
+    <TextView
+        android:id="@+id/txtTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="03:00"
+        android:textSize="96sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:fontFamily="monospace"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Aktuelle Runde -->
+    <TextView
+        android:id="@+id/txtCurrentRound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Runde 1 / 5"
+        android:textSize="24sp"
+        android:textColor="#CCCCCC"
+        android:layout_marginBottom="48dp"/>
+
+    <!-- Aktuelle Kombination -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#2a2a2a"
+        android:padding="24dp"
+        android:gravity="center"
+        android:layout_marginBottom="48dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AKTUELLE KOMBINATION:"
+            android:textSize="14sp"
+            android:textColor="#888888"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:id="@+id/txtCurrentCombination"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Warte auf Start..."
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"/>
+    </LinearLayout>
+
+    <!-- Spacer -->
+    <View
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- Control Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnPauseResume"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:text="⏸ Pause"
+            android:textSize="20sp"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:text="⏹ Stop"
+            android:textSize="20sp"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+</LinearLayout>
