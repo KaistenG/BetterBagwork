@@ -11,6 +11,7 @@ public class Workout {
     private int numberOfRounds;          // Anzahl der Runden
     private int announcementInterval;    // Ansage-Intervall in Sekunden (z.B. 15)
     private int restTimeSeconds;         // Pause zwischen Runden in Sekunden
+    private int startDelaySeconds;       // Startverzögerung in Sekunden (NEU!)
     private long timestamp;
 
     // Leerer Konstruktor für Firebase
@@ -21,7 +22,7 @@ public class Workout {
     // Konstruktor
     public Workout(String id, String name, List<String> combinationIds,
                    int roundTimeSeconds, int numberOfRounds,
-                   int announcementInterval, int restTimeSeconds) {
+                   int announcementInterval, int restTimeSeconds, int startDelaySeconds) {
         this.id = id;
         this.name = name;
         this.combinationIds = combinationIds != null ? combinationIds : new ArrayList<>();
@@ -29,6 +30,7 @@ public class Workout {
         this.numberOfRounds = numberOfRounds;
         this.announcementInterval = announcementInterval;
         this.restTimeSeconds = restTimeSeconds;
+        this.startDelaySeconds = startDelaySeconds;
         this.timestamp = System.currentTimeMillis();
     }
 
@@ -95,6 +97,14 @@ public class Workout {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getStartDelaySeconds() {
+        return startDelaySeconds;
+    }
+
+    public void setStartDelaySeconds(int startDelaySeconds) {
+        this.startDelaySeconds = startDelaySeconds;
     }
 
     // Hilfsmethoden

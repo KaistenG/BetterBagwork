@@ -54,6 +54,7 @@ public class WorkoutManager {
         workoutData.put("numberOfRounds", workout.getNumberOfRounds());
         workoutData.put("announcementInterval", workout.getAnnouncementInterval());
         workoutData.put("restTimeSeconds", workout.getRestTimeSeconds());
+        workoutData.put("startDelaySeconds", workout.getStartDelaySeconds());
         workoutData.put("timestamp", System.currentTimeMillis());
 
         // In Firebase speichern
@@ -97,6 +98,8 @@ public class WorkoutManager {
                                 doc.getLong("announcementInterval").intValue() : 15);
                         workout.setRestTimeSeconds(doc.getLong("restTimeSeconds") != null ?
                                 doc.getLong("restTimeSeconds").intValue() : 60);
+                        workout.setStartDelaySeconds(doc.getLong("startDelaySeconds") != null ?
+                                doc.getLong("startDelaySeconds").intValue() : 0);
                         workout.setTimestamp(doc.getLong("timestamp") != null ?
                                 doc.getLong("timestamp") : 0);
                         workouts.add(workout);

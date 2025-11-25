@@ -21,6 +21,7 @@ public class CreateWorkoutActivity extends AppCompatActivity {
     private NumberPicker pickerNumberOfRounds;
     private NumberPicker pickerAnnouncementInterval;
     private NumberPicker pickerRestMinutes, pickerRestSeconds;
+    private NumberPicker pickerStartDelay;
     private Button btnSaveWorkout;
 
     private CombinationSelectionAdapter selectionAdapter;
@@ -47,6 +48,7 @@ public class CreateWorkoutActivity extends AppCompatActivity {
         pickerAnnouncementInterval = findViewById(R.id.pickerAnnouncementInterval);
         pickerRestMinutes = findViewById(R.id.pickerRestMinutes);
         pickerRestSeconds = findViewById(R.id.pickerRestSeconds);
+        pickerStartDelay = findViewById(R.id.pickerStartDelay);
         btnSaveWorkout = findViewById(R.id.btnSaveWorkout);
 
         // NumberPicker konfigurieren
@@ -79,9 +81,9 @@ public class CreateWorkoutActivity extends AppCompatActivity {
         pickerNumberOfRounds.setValue(5); // Default: 5 Runden
 
         // Ansage-Intervall (5-60 Sekunden)
-        pickerAnnouncementInterval.setMinValue(5);
-        pickerAnnouncementInterval.setMaxValue(60);
-        pickerAnnouncementInterval.setValue(15); // Default: 15 Sekunden
+        pickerAnnouncementInterval.setMinValue(3); //3 Sekunden, weil 5 zu niedrig ist
+        pickerAnnouncementInterval.setMaxValue(15);
+        pickerAnnouncementInterval.setValue(5); // Default: 5 Sekunden
 
         // Pausenzeit - Minuten (0-5)
         pickerRestMinutes.setMinValue(0);
@@ -92,6 +94,12 @@ public class CreateWorkoutActivity extends AppCompatActivity {
         pickerRestSeconds.setMinValue(0);
         pickerRestSeconds.setMaxValue(59);
         pickerRestSeconds.setValue(0);
+
+        // Startverzögerung (0, 10, 20, 30 Sekunden)
+        pickerStartDelay.setMinValue(0);
+        pickerStartDelay.setMaxValue(3);
+        pickerStartDelay.setDisplayedValues(new String[]{"0s", "10s", "20s", "30s"});
+        pickerStartDelay.setValue(1); // Default: 10s Verzögerung
     }
 
     private void setupRecyclerView() {
@@ -145,6 +153,7 @@ public class CreateWorkoutActivity extends AppCompatActivity {
         int numberOfRounds = pickerNumberOfRounds.getValue();
         int announcementInterval = pickerAnnouncementInterval.getValue();
         int restTimeSeconds = (pickerRestMinutes.getValue() * 60) + pickerRestSeconds.getValue();
+        int startDelaySeconds = pickerStartDelay.getValue() * 10; // 0, 10, 20, 30
 
         // Validierung
         if (roundTimeSeconds < 30) {
@@ -160,7 +169,8 @@ public class CreateWorkoutActivity extends AppCompatActivity {
                 roundTimeSeconds,
                 numberOfRounds,
                 announcementInterval,
-                restTimeSeconds
+                restTimeSeconds,
+                startDelaySeconds
         );
 
         // Speichern

@@ -1,5 +1,6 @@
 package com.example.betterbagwork;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
@@ -35,9 +36,14 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     private int nextAnnouncementIn;
     private boolean isPaused = false;
     private boolean isResting = false;
-    private boolean isSpeaking = false; // Neu: Track ob TTS gerade spricht
+    private boolean isSpeaking = false;
+    private boolean isPreStart = false;
     private Random random;
     private static final String UTTERANCE_ID = "combo_announcement";
+
+    private MediaPlayer openingBellPlayer;
+    private MediaPlayer lastTenBellPlayer;
+    private MediaPlayer roundOverBellPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +75,11 @@ public class WorkoutTimerActivity extends AppCompatActivity {
         // Text-to-Speech initialisieren
         initTextToSpeech();
 
+        // Sound-Player laden
+        initOpeningBellSound();
+        initLastTenBellSound();
+        initRoundOverBellSound();
+
         // Workout laden
         loadWorkoutAndCombinations(workoutId);
 
@@ -88,10 +99,14 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     private void initTextToSpeech() {
         tts = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
-                int result = tts.setLanguage(Locale.GERMAN);
+                int result = tts.setLanguage(Locale.US);
                 if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                    Toast.makeText(this, "Deutsche Sprache nicht verfügbar", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "English language not available", Toast.LENGTH_SHORT).show();
                 }
+
+                // TTS-Qualität und Geschwindigkeit optimieren
+                tts.setSpeechRate(1.0f);  // 20% schneller (1.0 = normal, 1.5 = 50% schneller) - bleibe hier erst einmal bei 1.0f, da es ohne "," schon schnell genug ist.
+                tts.setPitch(1.0f);       // Normale Tonhöhe (0.5-2.0)
 
                 // UtteranceProgressListener setzen
                 tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
@@ -122,13 +137,61 @@ public class WorkoutTimerActivity extends AppCompatActivity {
         });
     }
 
+    private void initOpeningBellSound() {
+        try {
+            openingBellPlayer = MediaPlayer.create(this, R.raw.opening_bell);
+            openingBellPlayer.setOnCompletionListener(mp -> mp.seekTo(0));
+        } catch (Exception e) {
+            Toast.makeText(this, "Opening bell sound nicht gefunden", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void initLastTenBellSound() {
+        try {
+            lastTenBellPlayer = MediaPlayer.create(this, R.raw.last_ten_bell);
+            lastTenBellPlayer.setOnCompletionListener(mp -> mp.seekTo(0));
+        } catch (Exception e) {
+            Toast.makeText(this, "Last ten bell sound nicht gefunden", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void initRoundOverBellSound() {
+        try {
+            roundOverBellPlayer = MediaPlayer.create(this, R.raw.round_over_bell);
+            roundOverBellPlayer.setOnCompletionListener(mp -> mp.seekTo(0));
+        } catch (Exception e) {
+            Toast.makeText(this, "Round over bell sound nicht gefunden", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void playOpeningBell() {
+        if (openingBellPlayer != null) {
+            openingBellPlayer.start();
+        }
+    }
+
+    private void playLastTenBell() {
+        if (lastTenBellPlayer != null) {
+            lastTenBellPlayer.start();
+        }
+    }
+
+    private void playBeepSequence() {
+        // Nicht mehr benötigt - kann gelöscht werden
+    }
+
+    private void playRoundOverBell() {
+        if (roundOverBellPlayer != null) {
+            roundOverBellPlayer.start();
+        }
+    }
+
     private void loadWorkoutAndCombinations(String workoutId) {
         // Erst alle Kombinationen laden
         combinationManager.loadUserCombinations(this, new CombinationManager.OnCombinationsLoadedListener() {
             @Override
             public void onSuccess(List<Combination> allCombinations) {
-                // Workout-Daten müssen wir uns vom Intent holen oder neu laden
-                // Für jetzt: Workout-Daten aus Intent
+                // Workout-Daten aus Intent
                 workout = createWorkoutFromIntent();
 
                 // Nur die ausgewählten Kombinationen filtern
@@ -155,15 +218,15 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     }
 
     private Workout createWorkoutFromIntent() {
-        // Workout-Daten aus Intent extrahieren
         String name = getIntent().getStringExtra("workoutName");
         ArrayList<String> comboIds = getIntent().getStringArrayListExtra("combinationIds");
         int roundTime = getIntent().getIntExtra("roundTimeSeconds", 180);
         int rounds = getIntent().getIntExtra("numberOfRounds", 5);
         int interval = getIntent().getIntExtra("announcementInterval", 15);
         int rest = getIntent().getIntExtra("restTimeSeconds", 60);
+        int startDelay = getIntent().getIntExtra("startDelaySeconds", 0);
 
-        return new Workout(null, name, comboIds, roundTime, rounds, interval, rest);
+        return new Workout(null, name, comboIds, roundTime, rounds, interval, rest, startDelay);
     }
 
     private List<Combination> filterSelectedCombinations(List<Combination> all, List<String> selectedIds) {
@@ -179,19 +242,47 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     private void startWorkout() {
         currentRound = 1;
         isResting = false;
-        startRound();
+
+        // Wenn Startverzögerung gesetzt ist, Pre-Start starten
+        if (workout.getStartDelaySeconds() > 0) {
+            startPreStart();
+        } else {
+            // Direkt Runde starten
+            startRound();
+        }
+    }
+
+    private void startPreStart() {
+        remainingSeconds = workout.getStartDelaySeconds();
+        isPreStart = true;
+
+        updateUI();
+        speak("Get ready! Starting in " + remainingSeconds + " seconds", null);
+
+        startTimer();
     }
 
     private void startRound() {
         remainingSeconds = workout.getRoundTimeSeconds();
-        nextAnnouncementIn = -1; // -1 = Warte auf TTS-Fertigstellung
+        nextAnnouncementIn = -1;
         isResting = false;
+        isPreStart = false;
 
         updateUI();
-        speak("Runde " + currentRound + " Start!", null);
-        announceRandomCombination();
 
-        startTimer();
+        // Erst Ansage "Round X"
+        speak("Round " + currentRound, null);
+
+        // Nach 1 Sekunde: Gong
+        handler.postDelayed(() -> {
+            playOpeningBell();
+        }, 1000);
+
+        // Nach 2 Sekunden: Timer starten + erste Kombination
+        handler.postDelayed(() -> {
+            announceRandomCombination();
+            startTimer();
+        }, 2000);
     }
 
     private void startRest() {
@@ -199,9 +290,19 @@ public class WorkoutTimerActivity extends AppCompatActivity {
         isResting = true;
 
         updateUI();
-        speak("Pause!", null);
 
-        startTimer();
+        // Erst Round Over Bell spielen
+        playRoundOverBell();
+
+        // Nach 1 Sekunde: "Rest!" ansagen
+        handler.postDelayed(() -> {
+            speak("Rest!", null);
+        }, 1000);
+
+        // Nach 2 Sekunden: Timer starten
+        handler.postDelayed(() -> {
+            startTimer();
+        }, 2000);
     }
 
     private void startTimer() {
@@ -211,16 +312,29 @@ public class WorkoutTimerActivity extends AppCompatActivity {
                 if (!isPaused) {
                     remainingSeconds--;
 
-                    if (!isResting && !isSpeaking) {
-                        // Nur runterzählen wenn NICHT gerade gesprochen wird
-                        if (nextAnnouncementIn > 0) {
-                            nextAnnouncementIn--;
+                    if (isPreStart) {
+                        // Pre-Start Phase: Nur Countdown
+                        if (remainingSeconds <= 0) {
+                            onTimerFinished();
+                            return;
+                        }
+                    } else if (!isResting) {
+                        // Letzte 10 Sekunden Bell (auch während TTS!)
+                        if (remainingSeconds == 10) {
+                            playLastTenBell();
                         }
 
-                        // Neue Kombination ansagen?
-                        if (nextAnnouncementIn == 0) {
-                            announceRandomCombination();
-                            nextAnnouncementIn = -1; // Warten auf TTS-Fertigstellung
+                        // Kombinationen nur wenn NICHT gesprochen wird
+                        if (!isSpeaking) {
+                            if (nextAnnouncementIn > 0) {
+                                nextAnnouncementIn--;
+                            }
+
+                            // Neue Kombination ansagen? NUR wenn mehr als 3 Sekunden übrig!
+                            if (nextAnnouncementIn == 0 && remainingSeconds > 3) {
+                                announceRandomCombination();
+                                nextAnnouncementIn = -1;
+                            }
                         }
                     }
 
@@ -241,23 +355,28 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     }
 
     private void onTimerFinished() {
-        if (isResting) {
+        if (isPreStart) {
+            // Pre-Start beendet -> Runde starten
+            startRound();
+        } else if (isResting) {
             // Pause vorbei -> nächste Runde
             currentRound++;
             if (currentRound <= workout.getNumberOfRounds()) {
                 startRound();
             } else {
-                // Workout beendet
                 finishWorkout();
             }
         } else {
-            // Runde vorbei
+            // Runde vorbei -> Pause oder Ende
             if (currentRound < workout.getNumberOfRounds()) {
-                // Pause starten
+                // Pause starten (spielt selbst den Round Over Bell)
                 startRest();
             } else {
-                // Letzte Runde -> Workout beendet
-                finishWorkout();
+                // Letzte Runde -> Round Over Bell + Workout beendet
+                playRoundOverBell();
+                handler.postDelayed(() -> {
+                    finishWorkout();
+                }, 1000);
             }
         }
     }
@@ -269,21 +388,21 @@ public class WorkoutTimerActivity extends AppCompatActivity {
         String announcement = buildAnnouncementText(combo);
 
         txtCurrentCombination.setText(combo.getName() + "\n" + combo.getMovesAsString());
-        speak(announcement, UTTERANCE_ID); // Mit Utterance ID für Tracking
+        speak(announcement, UTTERANCE_ID);
     }
 
     private String buildAnnouncementText(Combination combo) {
-        // Kombinationsname und Schläge einzeln ansagen
+        // Schläge ohne Kommas - klingt schneller und cleaner
         StringBuilder sb = new StringBuilder();
         for (String move : combo.getMoves()) {
-            sb.append(move).append(", ");
+            sb.append(move).append(" ");
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     private void speak(String text, String utteranceId) {
         if (tts != null && !text.isEmpty()) {
-            Bundle params = new Bundle();
+            android.os.Bundle params = new android.os.Bundle();
             tts.speak(text, TextToSpeech.QUEUE_ADD, params, utteranceId);
         }
     }
@@ -295,11 +414,14 @@ public class WorkoutTimerActivity extends AppCompatActivity {
         txtTimer.setText(String.format("%02d:%02d", minutes, seconds));
 
         // Runde
-        txtCurrentRound.setText("Runde " + currentRound + " / " + workout.getNumberOfRounds());
+        txtCurrentRound.setText("Round " + currentRound + " / " + workout.getNumberOfRounds());
 
         // Status
-        if (isResting) {
-            txtStatus.setText("PAUSE");
+        if (isPreStart) {
+            txtStatus.setText("GET READY");
+            txtStatus.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+        } else if (isResting) {
+            txtStatus.setText("REST");
             txtStatus.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
         } else {
             txtStatus.setText("TRAINING");
@@ -312,9 +434,9 @@ public class WorkoutTimerActivity extends AppCompatActivity {
         btnPauseResume.setText(isPaused ? "▶ Resume" : "⏸ Pause");
 
         if (isPaused) {
-            speak("Pause", null);
+            speak("Paused", null);
         } else {
-            speak("Weiter", null);
+            speak("Continue", null);
         }
     }
 
@@ -328,7 +450,7 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     }
 
     private void finishWorkout() {
-        speak("Workout beendet! Gut gemacht!", null);
+        speak("Workout complete! Great job!", null);
 
         new AlertDialog.Builder(this)
                 .setTitle("Workout abgeschlossen!")
@@ -347,6 +469,15 @@ public class WorkoutTimerActivity extends AppCompatActivity {
         if (tts != null) {
             tts.stop();
             tts.shutdown();
+        }
+        if (openingBellPlayer != null) {
+            openingBellPlayer.release();
+        }
+        if (lastTenBellPlayer != null) {
+            lastTenBellPlayer.release();
+        }
+        if (roundOverBellPlayer != null) {
+            roundOverBellPlayer.release();
         }
     }
 }

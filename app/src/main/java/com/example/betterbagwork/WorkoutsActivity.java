@@ -123,6 +123,7 @@ public class WorkoutsActivity extends AppCompatActivity {
         intent.putExtra("numberOfRounds", workout.getNumberOfRounds());
         intent.putExtra("announcementInterval", workout.getAnnouncementInterval());
         intent.putExtra("restTimeSeconds", workout.getRestTimeSeconds());
+        intent.putExtra("startDelaySeconds", workout.getStartDelaySeconds());
         startActivity(intent);
     }
 }

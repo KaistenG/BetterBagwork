@@ -166,6 +166,22 @@
                 android:layout_marginStart="8dp"/>
         </LinearLayout>
 
+        <!-- Startverzögerung (NEU!) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Startverzögerung:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <NumberPicker
+            android:id="@+id/pickerStartDelay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="24dp"/>
+
         <!-- Speichern Button -->
         <Button
             android:id="@+id/btnSaveWorkout"
