@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">BetterBagwork</string>
+    <!-- Navigation -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Tabs -->
+    <string name="tab_combinations">Kombinationen</string>
+    <string name="tab_workouts">Workouts</string>
+    <string name="tab_history">Historie</string>
+
+    <!-- Menu -->
+    <string name="menu_about">Über die App</string>
+    <string name="menu_impressum">Impressum</string>
+    <string name="menu_logout">Ausloggen</string>
 </resources>

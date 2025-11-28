@@ -1,12 +1,16 @@
 package com.example.betterbagwork;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,6 +37,14 @@ public class CreateWorkoutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_workout);
+
+        // Toolbar mit Zurück-Button
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Neues Workout");
+        }
 
         // Manager initialisieren
         combinationManager = new CombinationManager();
@@ -62,6 +74,39 @@ public class CreateWorkoutActivity extends AppCompatActivity {
 
         // Speichern Button
         btnSaveWorkout.setOnClickListener(v -> saveWorkout());
+
+        // Back-Button Handling
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                showExitConfirmDialog();
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            showExitConfirmDialog();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showExitConfirmDialog() {
+        if (inputWorkoutName.getText().toString().trim().isEmpty() &&
+                selectionAdapter.getSelectedCombinationIds().isEmpty()) {
+            // Nichts eingegeben → direkt zurück
+            finish();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Abbrechen?")
+                .setMessage("Möchtest du die Erstellung wirklich abbrechen? Alle Eingaben gehen verloren.")
+                .setPositiveButton("Ja, abbrechen", (dialog, which) -> finish())
+                .setNegativeButton("Weiter bearbeiten", null)
+                .show();
     }
 
     private void setupNumberPickers() {
@@ -70,18 +115,23 @@ public class CreateWorkoutActivity extends AppCompatActivity {
         pickerRoundMinutes.setMaxValue(10);
         pickerRoundMinutes.setValue(3); // Default: 3 Minuten
 
-        // Rundenzeit - Sekunden (0-59)
+        // Rundenzeit - Sekunden (0, 5, 10, 15, ..., 55) - 5er Schritte
+        String[] roundSecondsValues = new String[12]; // 0, 5, 10, ..., 55
+        for (int i = 0; i < 12; i++) {
+            roundSecondsValues[i] = String.valueOf(i * 5);
+        }
         pickerRoundSeconds.setMinValue(0);
-        pickerRoundSeconds.setMaxValue(59);
-        pickerRoundSeconds.setValue(0);
+        pickerRoundSeconds.setMaxValue(11);
+        pickerRoundSeconds.setDisplayedValues(roundSecondsValues);
+        pickerRoundSeconds.setValue(0); // Default: 0 Sekunden
 
-        // Anzahl Runden (1-20)
+        // Anzahl Runden (1-12) - NEU: Maximum auf 12 gesetzt
         pickerNumberOfRounds.setMinValue(1);
-        pickerNumberOfRounds.setMaxValue(20);
+        pickerNumberOfRounds.setMaxValue(12);
         pickerNumberOfRounds.setValue(5); // Default: 5 Runden
 
-        // Ansage-Intervall (5-60 Sekunden)
-        pickerAnnouncementInterval.setMinValue(3); //3 Sekunden, weil 5 zu niedrig ist
+        // Ansage-Intervall (3-15 Sekunden) - BLEIBT bei 1-Sekunden-Schritten
+        pickerAnnouncementInterval.setMinValue(3);
         pickerAnnouncementInterval.setMaxValue(15);
         pickerAnnouncementInterval.setValue(5); // Default: 5 Sekunden
 
@@ -90,10 +140,15 @@ public class CreateWorkoutActivity extends AppCompatActivity {
         pickerRestMinutes.setMaxValue(5);
         pickerRestMinutes.setValue(1); // Default: 1 Minute
 
-        // Pausenzeit - Sekunden (0-59)
+        // Pausenzeit - Sekunden (0, 5, 10, 15, ..., 55) - 5er Schritte
+        String[] restSecondsValues = new String[12];
+        for (int i = 0; i < 12; i++) {
+            restSecondsValues[i] = String.valueOf(i * 5);
+        }
         pickerRestSeconds.setMinValue(0);
-        pickerRestSeconds.setMaxValue(59);
-        pickerRestSeconds.setValue(0);
+        pickerRestSeconds.setMaxValue(11);
+        pickerRestSeconds.setDisplayedValues(restSecondsValues);
+        pickerRestSeconds.setValue(0); // Default: 0 Sekunden
 
         // Startverzögerung (0, 10, 20, 30 Sekunden)
         pickerStartDelay.setMinValue(0);
@@ -149,10 +204,12 @@ public class CreateWorkoutActivity extends AppCompatActivity {
         }
 
         // Werte aus NumberPicker holen
-        int roundTimeSeconds = (pickerRoundMinutes.getValue() * 60) + pickerRoundSeconds.getValue();
+        // WICHTIG: pickerRoundSeconds.getValue() gibt Index zurück (0-11)
+        // Multipliziere mit 5 um echte Sekunden zu bekommen
+        int roundTimeSeconds = (pickerRoundMinutes.getValue() * 60) + (pickerRoundSeconds.getValue() * 5);
         int numberOfRounds = pickerNumberOfRounds.getValue();
         int announcementInterval = pickerAnnouncementInterval.getValue();
-        int restTimeSeconds = (pickerRestMinutes.getValue() * 60) + pickerRestSeconds.getValue();
+        int restTimeSeconds = (pickerRestMinutes.getValue() * 60) + (pickerRestSeconds.getValue() * 5);
         int startDelaySeconds = pickerStartDelay.getValue() * 10; // 0, 10, 20, 30
 
         // Validierung

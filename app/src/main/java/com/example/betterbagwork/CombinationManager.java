@@ -17,7 +17,8 @@ public class CombinationManager {
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
-    private static final String COLLECTION_COMBINATIONS = "combinations";
+    private static final String COLLECTION_USERS = "users";
+    private static final String SUBCOLLECTION_COMBINATIONS = "combinations";
 
     public CombinationManager() {
         this.db = FirebaseFirestore.getInstance();
@@ -47,13 +48,14 @@ public class CombinationManager {
 
         // Dokument erstellen
         Map<String, Object> combinationData = new HashMap<>();
-        combinationData.put("userId", userId);
         combinationData.put("name", combination.getName());
         combinationData.put("moves", combination.getMoves());
         combinationData.put("timestamp", System.currentTimeMillis());
 
-        // In Firebase speichern
-        db.collection(COLLECTION_COMBINATIONS)
+        // In Firebase speichern unter: users/{userId}/combinations/
+        db.collection(COLLECTION_USERS)
+                .document(userId)
+                .collection(SUBCOLLECTION_COMBINATIONS)
                 .add(combinationData)
                 .addOnSuccessListener(documentReference -> {
                     combination.setId(documentReference.getId());
@@ -74,8 +76,9 @@ public class CombinationManager {
             return;
         }
 
-        db.collection(COLLECTION_COMBINATIONS)
-                .whereEqualTo("userId", userId)
+        db.collection(COLLECTION_USERS)
+                .document(userId)
+                .collection(SUBCOLLECTION_COMBINATIONS)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
@@ -98,12 +101,15 @@ public class CombinationManager {
 
     // Kombination löschen
     public void deleteCombination(Context context, String combinationId, OnCombinationDeletedListener listener) {
-        if (combinationId == null) {
+        String userId = getUserId();
+        if (userId == null || combinationId == null) {
             if (listener != null) listener.onError("Keine ID");
             return;
         }
 
-        db.collection(COLLECTION_COMBINATIONS)
+        db.collection(COLLECTION_USERS)
+                .document(userId)
+                .collection(SUBCOLLECTION_COMBINATIONS)
                 .document(combinationId)
                 .delete()
                 .addOnSuccessListener(aVoid -> {

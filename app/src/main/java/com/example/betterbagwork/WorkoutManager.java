@@ -17,7 +17,8 @@ public class WorkoutManager {
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
-    private static final String COLLECTION_WORKOUTS = "workouts";
+    private static final String COLLECTION_USERS = "users";
+    private static final String SUBCOLLECTION_WORKOUTS = "workouts";
 
     public WorkoutManager() {
         this.db = FirebaseFirestore.getInstance();
@@ -47,7 +48,6 @@ public class WorkoutManager {
 
         // Dokument erstellen
         Map<String, Object> workoutData = new HashMap<>();
-        workoutData.put("userId", userId);
         workoutData.put("name", workout.getName());
         workoutData.put("combinationIds", workout.getCombinationIds());
         workoutData.put("roundTimeSeconds", workout.getRoundTimeSeconds());
@@ -57,8 +57,10 @@ public class WorkoutManager {
         workoutData.put("startDelaySeconds", workout.getStartDelaySeconds());
         workoutData.put("timestamp", System.currentTimeMillis());
 
-        // In Firebase speichern
-        db.collection(COLLECTION_WORKOUTS)
+        // In Firebase speichern unter: users/{userId}/workouts/
+        db.collection(COLLECTION_USERS)
+                .document(userId)
+                .collection(SUBCOLLECTION_WORKOUTS)
                 .add(workoutData)
                 .addOnSuccessListener(documentReference -> {
                     workout.setId(documentReference.getId());
@@ -79,8 +81,9 @@ public class WorkoutManager {
             return;
         }
 
-        db.collection(COLLECTION_WORKOUTS)
-                .whereEqualTo("userId", userId)
+        db.collection(COLLECTION_USERS)
+                .document(userId)
+                .collection(SUBCOLLECTION_WORKOUTS)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
@@ -114,12 +117,15 @@ public class WorkoutManager {
 
     // Workout löschen
     public void deleteWorkout(Context context, String workoutId, OnWorkoutDeletedListener listener) {
-        if (workoutId == null) {
+        String userId = getUserId();
+        if (userId == null || workoutId == null) {
             if (listener != null) listener.onError("Keine ID");
             return;
         }
 
-        db.collection(COLLECTION_WORKOUTS)
+        db.collection(COLLECTION_USERS)
+                .document(userId)
+                .collection(SUBCOLLECTION_WORKOUTS)
                 .document(workoutId)
                 .delete()
                 .addOnSuccessListener(aVoid -> {

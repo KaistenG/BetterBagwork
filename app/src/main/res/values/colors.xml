@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Original Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Better Bagwork Color Palette - Dark Minimalist -->
+
+    <!-- Backgrounds -->
+    <color name="background_dark">#1E1E1E</color>
+    <color name="surface_dark">#2E2E2E</color>
+    <color name="surface_elevated">#3E3E3E</color>
+
+    <!-- Primary (Rot) -->
+    <color name="primary_red">#C62828</color>
+    <color name="primary_red_dark">#B71C1C</color>
+    <color name="primary_red_light">#E53935</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color>
+    <color name="text_disabled">#707070</color>
+
+    <!-- Dividers & Borders -->
+    <color name="divider">#404040</color>
+
+    <!-- Status Colors -->
+    <color name="success">#4CAF50</color>
+    <color name="error">#F44336</color>
+    <color name="warning">#FF9800</color>
 </resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/drawer_about"
+            android:icon="@android:drawable/ic_menu_info_details"
+            android:title="Über die App" />
+
+        <item
+            android:id="@+id/drawer_impressum"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="Impressum" />
+    </group>
+
+    <item android:title="Account">
+        <menu>
+            <item
+                android:id="@+id/drawer_logout"
+                android:icon="@android:drawable/ic_menu_revert"
+                android:title="Ausloggen" />
+        </menu>
+    </item>
+</menu>

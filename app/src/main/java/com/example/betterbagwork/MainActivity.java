@@ -2,53 +2,90 @@ package com.example.betterbagwork;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.MenuItem;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private Button btnCombinations, btnWorkouts, btnLogout;
+    private BottomNavigationView bottomNavigationView;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         // Firebase initialisieren
         FirebaseApp.initializeApp(this);
 
+        // Prüfen, ob Nutzer eingeloggt
+        checkUserLogin();
+
         // Views initialisieren
-        btnCombinations = findViewById(R.id.btnCombinations);
-        btnWorkouts = findViewById(R.id.btnWorkouts);
-        btnLogout = findViewById(R.id.btnLogout);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        // Button: Zu Kombinationen
-        btnCombinations.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CombinationsActivity.class);
-            startActivity(intent);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        // Drawer Toggle (Hamburger-Icon)
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // Drawer Menu Listener
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Bottom Navigation Listener
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
+
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_combinations) {
+                selectedFragment = new CombinationsFragment();
+            } else if (itemId == R.id.nav_workouts) {
+                selectedFragment = new WorkoutsFragment();
+            } else if (itemId == R.id.nav_history) {
+                selectedFragment = new HistoryFragment();
+            }
+
+            if (selectedFragment != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, selectedFragment)
+                        .commit();
+                return true;
+            }
+            return false;
         });
 
-        // Button: Zu Workouts
-        btnWorkouts.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, WorkoutsActivity.class);
-            startActivity(intent);
-        });
+        // Standard-Fragment laden (Workouts als Haupt-Tab)
+        if (savedInstanceState == null) {
+            bottomNavigationView.setSelectedItemId(R.id.nav_workouts);
+        }
+    }
 
-        // Logout-Button
-        btnLogout.setOnClickListener(v -> FirebaseHelper.logout(MainActivity.this));
-
-        // Prüfen, ob ein Nutzer eingeloggt ist
+    private void checkUserLogin() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             currentUser.reload().addOnCompleteListener(task -> {
@@ -64,12 +101,58 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         }
+    }
 
-        // Layout-Handling EdgeToEdge
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.drawer_logout) {
+            showLogoutDialog();
+        } else if (itemId == R.id.drawer_impressum) {
+            showImpressum();
+        } else if (itemId == R.id.drawer_about) {
+            showAbout();
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Ausloggen?")
+                .setMessage("Möchtest du dich wirklich ausloggen?")
+                .setPositiveButton("Ja", (dialog, which) -> {
+                    FirebaseHelper.logout(MainActivity.this);
+                })
+                .setNegativeButton("Nein", null)
+                .show();
+    }
+
+    private void showImpressum() {
+        new AlertDialog.Builder(this)
+                .setTitle("Impressum")
+                .setMessage("Better Bagwork\n\nEntwickelt von: [Dein Name]\n\nVersion: 1.0")
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    private void showAbout() {
+        new AlertDialog.Builder(this)
+                .setTitle("Über Better Bagwork")
+                .setMessage("Better Bagwork ist deine App für effektives Bagwork-Training.\n\n" +
+                        "Erstelle Kombinationen, plane Workouts und trainiere strukturiert!")
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 }
