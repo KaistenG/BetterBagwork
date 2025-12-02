@@ -11,7 +11,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     private Workout workout;
     private List<Combination> combinations;
     private CombinationManager combinationManager;
+    private HistoryManager historyManager;
 
     private AudioAnnouncerHelper audioAnnouncer;
     private Handler handler;
@@ -40,6 +40,10 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     private boolean isResting = false;
     private boolean isPreStart = false;
     private Random random;
+
+    // Für History-Tracking
+    private long workoutStartTime;
+    private int totalSecondsElapsed = 0;
 
     private MediaPlayer openingBellPlayer;
     private MediaPlayer lastTenBellPlayer;
@@ -69,6 +73,7 @@ public class WorkoutTimerActivity extends AppCompatActivity {
 
         // Init
         combinationManager = new CombinationManager();
+        historyManager = new HistoryManager();
         random = new Random();
         handler = new Handler();
         combinations = new ArrayList<>();
@@ -137,7 +142,7 @@ public class WorkoutTimerActivity extends AppCompatActivity {
 
     private Workout createWorkoutFromIntent() {
         return new Workout(
-                null,
+                getIntent().getStringExtra("workoutId"),
                 getIntent().getStringExtra("workoutName"),
                 getIntent().getStringArrayListExtra("combinationIds"),
                 getIntent().getIntExtra("roundTimeSeconds", 180),
@@ -159,6 +164,8 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     private void startWorkout() {
         currentRound = 1;
         isResting = false;
+        workoutStartTime = System.currentTimeMillis();
+        totalSecondsElapsed = 0;
         Log.d(TAG, "Workout Start");
 
         if (workout.getStartDelaySeconds() > 0) {
@@ -223,6 +230,7 @@ public class WorkoutTimerActivity extends AppCompatActivity {
             public void run() {
                 if (!isPaused) {
                     remainingSeconds--;
+                    totalSecondsElapsed++;
 
                     if (isPreStart) {
                         // Pre-Start Phase
@@ -334,10 +342,15 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     }
 
     private void showStopConfirmDialog() {
-        new MaterialAlertDialogBuilder(this) //damit der Hintergrund des Abbrechdialogfeldes sich dem Theme anpasst.
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Workout abbrechen?")
                 .setMessage("Wirklich beenden?")
-                .setPositiveButton("Ja", (d, w) -> finish())
+                .setPositiveButton("Ja", (d, w) -> {
+                    // Speichere als "aborted" - current round minus 1 wenn in Runde, minus 0 wenn in Rest
+                    int completedRounds = isResting ? currentRound - 1 : currentRound - 1;
+                    saveHistory("aborted", Math.max(0, completedRounds));
+                    finish();
+                })
                 .setNegativeButton("Nein", null)
                 .show();
     }
@@ -345,12 +358,40 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     private void finishWorkout() {
         audioAnnouncer.announceText("Workout complete!", () -> {});
 
-        new MaterialAlertDialogBuilder(this)  // anpassen des Themes
+        // Speichere als "completed"
+        saveHistory("completed", workout.getNumberOfRounds());
+
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Workout fertig!")
                 .setMessage("Du hast " + workout.getNumberOfRounds() + " Runden absolviert!")
                 .setPositiveButton("OK", (d, w) -> finish())
                 .setCancelable(false)
                 .show();
+    }
+
+    private void saveHistory(String status, int roundsCompleted) {
+        WorkoutHistory history = new WorkoutHistory(
+                null,
+                workout.getId(),
+                workout.getName(),
+                System.currentTimeMillis(),
+                status,
+                totalSecondsElapsed,
+                roundsCompleted,
+                workout.getNumberOfRounds()
+        );
+
+        historyManager.saveHistory(this, history, new HistoryManager.OnHistorySavedListener() {
+            @Override
+            public void onSuccess(WorkoutHistory savedHistory) {
+                Log.d(TAG, "History gespeichert: " + status);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "History Fehler: " + error);
+            }
+        });
     }
 
     @Override

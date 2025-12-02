@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class FirebaseHelper {
@@ -31,7 +35,9 @@ public class FirebaseHelper {
                             ((LoginActivity) context).finish();
                         }
                     } else {
-                        Toast.makeText(context, "Login fehlgeschlagen: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        // Spezifische Fehlermeldungen basierend auf Firebase Error
+                        String errorMessage = getLoginErrorMessage(task.getException());
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -52,7 +58,9 @@ public class FirebaseHelper {
                             ((RegisterActivity) context).finish();
                         }
                     } else {
-                        Toast.makeText(context, "Registrierung fehlgeschlagen: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        // Spezifische Fehlermeldungen für Registrierung
+                        String errorMessage = getRegisterErrorMessage(task.getException());
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -76,5 +84,36 @@ public class FirebaseHelper {
     public FirebaseUser getCurrentUser() {
         return auth.getCurrentUser();
     }
-}
 
+    // --- Hilfsmethoden für benutzerfreundliche Fehlermeldungen ---
+
+    private String getLoginErrorMessage(Exception exception) {
+        if (exception instanceof FirebaseAuthInvalidUserException) {
+            return "Kein Account mit dieser E-Mail gefunden";
+        } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
+            return "Falsches Passwort";
+        } else if (exception != null && exception.getMessage() != null) {
+            if (exception.getMessage().contains("network")) {
+                return "Keine Internetverbindung";
+            } else if (exception.getMessage().contains("badly formatted")) {
+                return "Ungültiges E-Mail-Format";
+            }
+        }
+        return "Login fehlgeschlagen. Bitte versuche es erneut.";
+    }
+
+    private String getRegisterErrorMessage(Exception exception) {
+        if (exception instanceof FirebaseAuthWeakPasswordException) {
+            return "Passwort zu schwach. Mindestens 6 Zeichen erforderlich.";
+        } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
+            return "Ungültiges E-Mail-Format";
+        } else if (exception instanceof FirebaseAuthUserCollisionException) {
+            return "E-Mail bereits registriert";
+        } else if (exception != null && exception.getMessage() != null) {
+            if (exception.getMessage().contains("network")) {
+                return "Keine Internetverbindung";
+            }
+        }
+        return "Registrierung fehlgeschlagen. Bitte versuche es erneut.";
+    }
+}

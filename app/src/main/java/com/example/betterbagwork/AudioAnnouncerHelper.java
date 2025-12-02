@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AudioAnnouncerHelper {
 
     private static final String TAG = "AudioAnnouncer";
-    private static final int OVERLAP_DELAY_MS = 570; // Zeit zwischen Schlag-Starts (anpassbar!)
+    private static final int OVERLAP_DELAY_MS = 600; // Zeit zwischen Schlag-Starts (anpassbar!)
     private static final int MAX_STREAMS = 10; // Maximale gleichzeitige Sounds
 
     private Context context;
