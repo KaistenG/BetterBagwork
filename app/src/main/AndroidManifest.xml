@@ -24,14 +24,6 @@
             android:exported="false"
             android:label="Workout erstellen" />
         <activity
-            android:name=".WorkoutsActivity"
-            android:exported="false"
-            android:label="Workouts" />
-        <activity
-            android:name=".CombinationsActivity"
-            android:exported="false"
-            android:label="Kombinationen" />
-        <activity
             android:name=".CreateCombinationActivity"
             android:exported="false"
             android:label="Kombination erstellen" />
