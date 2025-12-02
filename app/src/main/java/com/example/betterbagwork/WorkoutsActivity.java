@@ -5,10 +5,11 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,11 @@ public class WorkoutsActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onEditClick(Workout workout) {
+                openEditWorkout(workout);
+            }
+
+            @Override
             public void onDeleteClick(Workout workout) {
                 showDeleteConfirmDialog(workout);
             }
@@ -91,7 +97,7 @@ public class WorkoutsActivity extends AppCompatActivity {
     }
 
     private void showDeleteConfirmDialog(Workout workout) {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Workout löschen?")
                 .setMessage("Möchtest du '" + workout.getName() + "' wirklich löschen?")
                 .setPositiveButton("Löschen", (dialog, which) -> deleteWorkout(workout))
@@ -112,6 +118,20 @@ public class WorkoutsActivity extends AppCompatActivity {
                         // Fehler wird bereits im Manager angezeigt
                     }
                 });
+    }
+
+    private void openEditWorkout(Workout workout) {
+        Intent intent = new Intent(WorkoutsActivity.this, CreateWorkoutActivity.class);
+        intent.putExtra("EDIT_MODE", true);
+        intent.putExtra("WORKOUT_ID", workout.getId());
+        intent.putExtra("WORKOUT_NAME", workout.getName());
+        intent.putStringArrayListExtra("COMBINATION_IDS", new ArrayList<>(workout.getCombinationIds()));
+        intent.putExtra("ROUND_TIME_SECONDS", workout.getRoundTimeSeconds());
+        intent.putExtra("NUMBER_OF_ROUNDS", workout.getNumberOfRounds());
+        intent.putExtra("ANNOUNCEMENT_INTERVAL", workout.getAnnouncementInterval());
+        intent.putExtra("REST_TIME_SECONDS", workout.getRestTimeSeconds());
+        intent.putExtra("START_DELAY_SECONDS", workout.getStartDelaySeconds());
+        startActivity(intent);
     }
 
     private void startWorkoutTimer(Workout workout) {

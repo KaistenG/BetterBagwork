@@ -48,6 +48,13 @@ public class CombinationSelectionAdapter extends RecyclerView.Adapter<Combinatio
         notifyDataSetChanged();
     }
 
+    public void setSelectedCombinations(List<String> combinationIds) {
+        if (combinationIds != null) {
+            this.selectedIds = new HashSet<>(combinationIds);
+            notifyDataSetChanged();
+        }
+    }
+
     public List<String> getSelectedCombinationIds() {
         return new ArrayList<>(selectedIds);
     }

@@ -73,6 +73,53 @@ public class WorkoutManager {
                 });
     }
 
+    // Workout aktualisieren
+    public void updateWorkout(Context context, Workout workout, OnWorkoutSavedListener listener) {
+        String userId = getUserId();
+        if (userId == null || workout.getId() == null) {
+            Toast.makeText(context, "Fehler: Keine ID", Toast.LENGTH_SHORT).show();
+            if (listener != null) listener.onError("Keine ID");
+            return;
+        }
+
+        if (workout.getName() == null || workout.getName().trim().isEmpty()) {
+            Toast.makeText(context, "Bitte einen Namen eingeben", Toast.LENGTH_SHORT).show();
+            if (listener != null) listener.onError("Name fehlt");
+            return;
+        }
+
+        if (workout.getCombinationIds() == null || workout.getCombinationIds().isEmpty()) {
+            Toast.makeText(context, "Bitte mindestens eine Kombination auswählen", Toast.LENGTH_SHORT).show();
+            if (listener != null) listener.onError("Keine Kombinationen");
+            return;
+        }
+
+        // Daten für Update
+        Map<String, Object> workoutData = new HashMap<>();
+        workoutData.put("name", workout.getName());
+        workoutData.put("combinationIds", workout.getCombinationIds());
+        workoutData.put("roundTimeSeconds", workout.getRoundTimeSeconds());
+        workoutData.put("numberOfRounds", workout.getNumberOfRounds());
+        workoutData.put("announcementInterval", workout.getAnnouncementInterval());
+        workoutData.put("restTimeSeconds", workout.getRestTimeSeconds());
+        workoutData.put("startDelaySeconds", workout.getStartDelaySeconds());
+        // Timestamp NICHT aktualisieren, damit Sortierung erhalten bleibt
+
+        db.collection(COLLECTION_USERS)
+                .document(userId)
+                .collection(SUBCOLLECTION_WORKOUTS)
+                .document(workout.getId())
+                .update(workoutData)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Workout aktualisiert", Toast.LENGTH_SHORT).show();
+                    if (listener != null) listener.onSuccess(workout);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Fehler beim Aktualisieren: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    if (listener != null) listener.onError(e.getMessage());
+                });
+    }
+
     // Alle Workouts des Users laden
     public void loadUserWorkouts(Context context, OnWorkoutsLoadedListener listener) {
         String userId = getUserId();

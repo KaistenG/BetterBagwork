@@ -68,6 +68,11 @@ public class WorkoutsFragment extends Fragment {
             }
 
             @Override
+            public void onEditClick(Workout workout) {
+                openEditWorkout(workout);
+            }
+
+            @Override
             public void onDeleteClick(Workout workout) {
                 showDeleteConfirmDialog(workout);
             }
@@ -94,7 +99,7 @@ public class WorkoutsFragment extends Fragment {
     }
 
     private void showDeleteConfirmDialog(Workout workout) {
-        new MaterialAlertDialogBuilder(getContext()) //für das richtige Theme im Dialogfeld
+        new MaterialAlertDialogBuilder(getContext())
                 .setTitle("Workout löschen?")
                 .setMessage("Möchtest du '" + workout.getName() + "' wirklich löschen?")
                 .setPositiveButton("Löschen", (dialog, which) -> deleteWorkout(workout))
@@ -115,6 +120,20 @@ public class WorkoutsFragment extends Fragment {
                         // Fehler wird bereits im Manager angezeigt
                     }
                 });
+    }
+
+    private void openEditWorkout(Workout workout) {
+        Intent intent = new Intent(getActivity(), CreateWorkoutActivity.class);
+        intent.putExtra("EDIT_MODE", true);
+        intent.putExtra("WORKOUT_ID", workout.getId());
+        intent.putExtra("WORKOUT_NAME", workout.getName());
+        intent.putStringArrayListExtra("COMBINATION_IDS", new ArrayList<>(workout.getCombinationIds()));
+        intent.putExtra("ROUND_TIME_SECONDS", workout.getRoundTimeSeconds());
+        intent.putExtra("NUMBER_OF_ROUNDS", workout.getNumberOfRounds());
+        intent.putExtra("ANNOUNCEMENT_INTERVAL", workout.getAnnouncementInterval());
+        intent.putExtra("REST_TIME_SECONDS", workout.getRestTimeSeconds());
+        intent.putExtra("START_DELAY_SECONDS", workout.getStartDelaySeconds());
+        startActivity(intent);
     }
 
     private void startWorkoutTimer(Workout workout) {

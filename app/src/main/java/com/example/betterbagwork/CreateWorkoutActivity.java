@@ -33,14 +33,24 @@ public class CreateWorkoutActivity extends AppCompatActivity {
     private WorkoutManager workoutManager;
     private List<Combination> allCombinations;
 
+    // Edit Mode
+    private boolean isEditMode = false;
+    private String editWorkoutId = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_workout);
 
+        // Prüfen ob Edit-Mode
+        checkEditMode();
+
         // Return Button Handler
         ImageView btnReturn = findViewById(R.id.btnReturn);
         btnReturn.setOnClickListener(v -> showExitConfirmDialog());
+
+        // Toolbar Titel anpassen
+        updateToolbarTitle();
 
         // Manager initialisieren
         combinationManager = new CombinationManager();
@@ -78,6 +88,52 @@ public class CreateWorkoutActivity extends AppCompatActivity {
                 showExitConfirmDialog();
             }
         });
+    }
+
+    private void checkEditMode() {
+        isEditMode = getIntent().getBooleanExtra("EDIT_MODE", false);
+        if (isEditMode) {
+            editWorkoutId = getIntent().getStringExtra("WORKOUT_ID");
+        }
+    }
+
+    private void updateToolbarTitle() {
+        android.widget.TextView txtTitle = findViewById(R.id.txtTitle);
+        if (isEditMode) {
+            txtTitle.setText("Workout bearbeiten");
+        } else {
+            txtTitle.setText("Neues Workout");
+        }
+    }
+
+    private void loadEditData() {
+        if (!isEditMode) return;
+
+        // Daten aus Intent laden
+        String workoutName = getIntent().getStringExtra("WORKOUT_NAME");
+        ArrayList<String> combinationIds = getIntent().getStringArrayListExtra("COMBINATION_IDS");
+        int roundTimeSeconds = getIntent().getIntExtra("ROUND_TIME_SECONDS", 180);
+        int numberOfRounds = getIntent().getIntExtra("NUMBER_OF_ROUNDS", 5);
+        int announcementInterval = getIntent().getIntExtra("ANNOUNCEMENT_INTERVAL", 5);
+        int restTimeSeconds = getIntent().getIntExtra("REST_TIME_SECONDS", 60);
+        int startDelaySeconds = getIntent().getIntExtra("START_DELAY_SECONDS", 10);
+
+        // Daten vorausfüllen
+        inputWorkoutName.setText(workoutName);
+
+        // NumberPicker setzen
+        pickerRoundMinutes.setValue(roundTimeSeconds / 60);
+        pickerRoundSeconds.setValue((roundTimeSeconds % 60) / 5); // Index für 5er-Schritte
+        pickerNumberOfRounds.setValue(numberOfRounds);
+        pickerAnnouncementInterval.setValue(announcementInterval);
+        pickerRestMinutes.setValue(restTimeSeconds / 60);
+        pickerRestSeconds.setValue((restTimeSeconds % 60) / 5); // Index für 5er-Schritte
+        pickerStartDelay.setValue(startDelaySeconds / 10); // 0, 10, 20, 30 → Index
+
+        // Kombinationen vorauswählen
+        if (combinationIds != null) {
+            selectionAdapter.setSelectedCombinations(combinationIds);
+        }
     }
 
     private void showExitConfirmDialog() {
@@ -157,6 +213,9 @@ public class CreateWorkoutActivity extends AppCompatActivity {
                 allCombinations = combinations;
                 selectionAdapter.setCombinations(combinations);
 
+                // Edit-Daten laden (nach Kombinationen geladen)
+                loadEditData();
+
                 if (combinations.isEmpty()) {
                     Toast.makeText(CreateWorkoutActivity.this,
                             "Erstelle zuerst Kombinationen!",
@@ -191,13 +250,11 @@ public class CreateWorkoutActivity extends AppCompatActivity {
         }
 
         // Werte aus NumberPicker holen
-        // WICHTIG: pickerRoundSeconds.getValue() gibt Index zurück (0-11)
-        // Multipliziere mit 5 um echte Sekunden zu bekommen
         int roundTimeSeconds = (pickerRoundMinutes.getValue() * 60) + (pickerRoundSeconds.getValue() * 5);
         int numberOfRounds = pickerNumberOfRounds.getValue();
         int announcementInterval = pickerAnnouncementInterval.getValue();
         int restTimeSeconds = (pickerRestMinutes.getValue() * 60) + (pickerRestSeconds.getValue() * 5);
-        int startDelaySeconds = pickerStartDelay.getValue() * 10; // 0, 10, 20, 30
+        int startDelaySeconds = pickerStartDelay.getValue() * 10;
 
         // Validierung
         if (roundTimeSeconds < 30) {
@@ -205,9 +262,9 @@ public class CreateWorkoutActivity extends AppCompatActivity {
             return;
         }
 
-        // Workout erstellen
+        // Workout erstellen/aktualisieren
         Workout workout = new Workout(
-                null,
+                isEditMode ? editWorkoutId : null,
                 name,
                 selectedIds,
                 roundTimeSeconds,
@@ -217,17 +274,31 @@ public class CreateWorkoutActivity extends AppCompatActivity {
                 startDelaySeconds
         );
 
-        // Speichern
-        workoutManager.saveWorkout(this, workout, new WorkoutManager.OnWorkoutSavedListener() {
-            @Override
-            public void onSuccess(Workout savedWorkout) {
-                finish();
-            }
+        // Speichern oder Aktualisieren
+        if (isEditMode) {
+            workoutManager.updateWorkout(this, workout, new WorkoutManager.OnWorkoutSavedListener() {
+                @Override
+                public void onSuccess(Workout savedWorkout) {
+                    finish();
+                }
 
-            @Override
-            public void onError(String error) {
-                // Fehler wird bereits im Manager angezeigt
-            }
-        });
+                @Override
+                public void onError(String error) {
+                    // Fehler wird bereits im Manager angezeigt
+                }
+            });
+        } else {
+            workoutManager.saveWorkout(this, workout, new WorkoutManager.OnWorkoutSavedListener() {
+                @Override
+                public void onSuccess(Workout savedWorkout) {
+                    finish();
+                }
+
+                @Override
+                public void onError(String error) {
+                    // Fehler wird bereits im Manager angezeigt
+                }
+            });
+        }
     }
 }

@@ -80,10 +80,11 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
                 }
             });
 
-            // Edit Button (Platzhalter für später)
+            // Edit Button
             btnEdit.setOnClickListener(v -> {
-                // TODO: Edit-Funktion später implementieren
-                Toast.makeText(v.getContext(), "Bearbeiten kommt bald!", Toast.LENGTH_SHORT).show();
+                if (listener != null) {
+                    listener.onEditClick(workout);
+                }
             });
 
             // Delete Button
@@ -97,6 +98,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
 
     public interface OnWorkoutClickListener {
         void onWorkoutClick(Workout workout);
+        void onEditClick(Workout workout);
         void onDeleteClick(Workout workout);
     }
 }
