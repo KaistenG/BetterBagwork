@@ -10,10 +10,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class CombinationsFragment extends Fragment {
     }
 
     private void showDeleteConfirmDialog(Combination combination) {
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext()) //ebenfalls wieder für das richtige Theme im Dialogfeld
                 .setTitle("Kombination löschen?")
                 .setMessage("Möchtest du '" + combination.getName() + "' wirklich löschen?")
                 .setPositiveButton("Löschen", (dialog, which) -> deleteCombination(combination))

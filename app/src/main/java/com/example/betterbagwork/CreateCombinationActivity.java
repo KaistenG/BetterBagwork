@@ -1,17 +1,17 @@
 package com.example.betterbagwork;
 
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +48,9 @@ public class CreateCombinationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_combination);
 
-        // Toolbar mit Zurück-Button
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Neue Kombination");
-        }
+        // Return Button Handler
+        ImageView btnReturn = findViewById(R.id.btnReturn);
+        btnReturn.setOnClickListener(v -> showExitConfirmDialog());
 
         // Initialisierung
         combinationManager = new CombinationManager();
@@ -88,15 +84,6 @@ public class CreateCombinationActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            showExitConfirmDialog();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private void showExitConfirmDialog() {
         if (selectedMoves.isEmpty() && inputCombinationName.getText().toString().trim().isEmpty()) {
             // Nichts eingegeben → direkt zurück
@@ -104,7 +91,7 @@ public class CreateCombinationActivity extends AppCompatActivity {
             return;
         }
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Abbrechen?")
                 .setMessage("Möchtest du die Erstellung wirklich abbrechen? Alle Eingaben gehen verloren.")
                 .setPositiveButton("Ja, abbrechen", (dialog, which) -> finish())
@@ -114,16 +101,63 @@ public class CreateCombinationActivity extends AppCompatActivity {
 
     // Schlag-Buttons dynamisch erstellen
     private void createMoveButtons() {
-        for (String move : availableMoves) {
-            Button btn = new Button(this);
-            btn.setText(move);
-            btn.setLayoutParams(new LinearLayout.LayoutParams(
+        // Spezifische Anordnung: 2 pro Zeile
+        String[][] movesPairs = {
+                {"Jab", "Cross"},
+                {"Left Hook", "Right Hook"},
+                {"Left Uppercut", "Right Uppercut"},
+                {"Switch Kick", "Rear Kick"},
+                {"Switch Knee", "Rear Knee"},
+                {"Left Elbow", "Right Elbow"},
+                {"Teep", null}  // Teep alleine
+        };
+
+        for (String[] pair : movesPairs) {
+            // Horizontales Layout für 2 Buttons
+            LinearLayout rowLayout = new LinearLayout(this);
+            rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+            rowLayout.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             ));
-            btn.setOnClickListener(v -> addMove(move));
-            moveButtonsLayout.addView(btn);
+
+            // Erster Button
+            com.google.android.material.button.MaterialButton btn1 = createMoveButton(pair[0]);
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1
+            );
+            params1.setMargins(0, 0, 8, 8);
+            btn1.setLayoutParams(params1);
+            rowLayout.addView(btn1);
+
+            // Zweiter Button (falls vorhanden)
+            if (pair[1] != null) {
+                com.google.android.material.button.MaterialButton btn2 = createMoveButton(pair[1]);
+                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
+                        0,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1
+                );
+                params2.setMargins(8, 0, 0, 8);
+                btn2.setLayoutParams(params2);
+                rowLayout.addView(btn2);
+            }
+
+            moveButtonsLayout.addView(rowLayout);
         }
+    }
+
+    // Helper-Methode zum Erstellen eines Buttons
+    private com.google.android.material.button.MaterialButton createMoveButton(String move) {
+        com.google.android.material.button.MaterialButton btn = new com.google.android.material.button.MaterialButton(this);
+        btn.setText(move);
+        btn.setTextColor(getResources().getColor(R.color.text_primary, null));  // Weiß
+        btn.setBackgroundColor(getResources().getColor(R.color.surface_dark, null));  // Grau (#2E2E2E)
+        btn.setCornerRadius(8);
+        btn.setOnClickListener(v -> addMove(move));
+        return btn;
     }
 
     // Schlag zur Kombination hinzufügen

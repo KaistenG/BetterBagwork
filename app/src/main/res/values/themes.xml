@@ -37,6 +37,9 @@
 
         <!-- Bottom Navigation -->
         <item name="bottomNavigationStyle">@style/Widget.BetterBagwork.BottomNavigation</item>
+
+        <!-- Material Alert Dialog Theme -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.BetterBagwork.MaterialAlertDialog</item>
     </style>
 
     <style name="Theme.BetterBagwork" parent="Base.Theme.BetterBagwork" />
@@ -62,5 +65,29 @@
         <item name="itemIconTint">@color/bottom_nav_color</item>
         <item name="itemTextColor">@color/bottom_nav_color</item>
         <item name="android:background">@color/surface_dark</item>
+        <item name="itemActiveIndicatorStyle">@null</item>
+        <item name="itemRippleColor">#10C62828</item>
     </style>
+
+    <!-- Material Alert Dialog Theme (Dark) - Simplified -->
+    <style name="ThemeOverlay.BetterBagwork.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:background">@drawable/dialog_background</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.BetterBagwork.Button.Dialog</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.BetterBagwork.Button.Dialog</item>
+    </style>
+
+    <!-- Dialog Button Style -->
+    <style name="Widget.BetterBagwork.Button.Dialog" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/primary_red</item>
+    </style>
+
+    <!-- NumberPicker Style für Dark Theme -->
+    <style name="NumberPickerTheme" parent="Theme.Material3.Dark">
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="colorControlNormal">@color/primary_red</item>
+    </style>
+
 </resources>

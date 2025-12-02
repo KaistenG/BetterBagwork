@@ -60,7 +60,7 @@ public class Combination {
         if (moves == null || moves.isEmpty()) {
             return "Keine Schläge";
         }
-        return String.join(" → ", moves);
+        return String.join(" - ", moves);
     }
 
     // Hilfsmethode: Anzahl der Schläge

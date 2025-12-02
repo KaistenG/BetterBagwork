@@ -1,18 +1,18 @@
 package com.example.betterbagwork;
 
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +38,9 @@ public class CreateWorkoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_workout);
 
-        // Toolbar mit Zurück-Button
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Neues Workout");
-        }
+        // Return Button Handler
+        ImageView btnReturn = findViewById(R.id.btnReturn);
+        btnReturn.setOnClickListener(v -> showExitConfirmDialog());
 
         // Manager initialisieren
         combinationManager = new CombinationManager();
@@ -84,15 +80,6 @@ public class CreateWorkoutActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            showExitConfirmDialog();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private void showExitConfirmDialog() {
         if (inputWorkoutName.getText().toString().trim().isEmpty() &&
                 selectionAdapter.getSelectedCombinationIds().isEmpty()) {
@@ -101,7 +88,7 @@ public class CreateWorkoutActivity extends AppCompatActivity {
             return;
         }
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Abbrechen?")
                 .setMessage("Möchtest du die Erstellung wirklich abbrechen? Alle Eingaben gehen verloren.")
                 .setPositiveButton("Ja, abbrechen", (dialog, which) -> finish())

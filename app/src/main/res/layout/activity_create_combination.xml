@@ -5,15 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
+    <!-- Custom Toolbar mit Gradient -->
+    <include
         android:id="@+id/toolbar"
+        layout="@layout/toolbar_create_combination"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:elevation="4dp"
-        app:title="Neue Kombination" />
+        android:layout_height="?attr/actionBarSize"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -33,6 +30,7 @@
                 android:text="Name der Kombination:"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"/>
 
             <EditText
@@ -41,6 +39,8 @@
                 android:layout_height="wrap_content"
                 android:hint="z.B. Jab-Cross-Hook"
                 android:inputType="text"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
                 android:layout_marginBottom="24dp"/>
 
             <!-- Ausgewählte Schläge Anzeige -->
@@ -50,6 +50,7 @@
                 android:text="Ausgewählte Kombination:"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"/>
 
             <TextView
@@ -58,15 +59,30 @@
                 android:layout_height="wrap_content"
                 android:text="Keine Schläge ausgewählt"
                 android:textSize="14sp"
+                android:textColor="@color/text_secondary"
                 android:padding="12dp"
-                android:background="@android:drawable/editbox_background"
+                android:background="@drawable/combination_selector_background"
                 android:layout_marginBottom="8dp"/>
 
-            <Button
+            <!-- Löschen Button -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnClearMoves"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Schläge löschen"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_gravity="center"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Löschen"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                app:icon="@drawable/ic_delete"
+                app:iconSize="24dp"
+                app:iconTint="@color/black"
+                app:cornerRadius="8dp"
+                app:backgroundTint="#A61010"
+                app:iconGravity="end"
+                app:iconPadding="8dp"
                 android:layout_marginBottom="24dp"/>
 
             <!-- Verfügbare Schläge -->
@@ -76,6 +92,7 @@
                 android:text="Schläge hinzufügen:"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"/>
 
             <LinearLayout
@@ -86,13 +103,24 @@
                 android:layout_marginBottom="24dp"/>
 
             <!-- Speichern Button -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveCombination"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Kombination speichern"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_gravity="center"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Speichern"
                 android:textStyle="bold"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                app:icon="@drawable/ic_save"
+                app:iconSize="24dp"
+                app:iconTint="@color/black"
+                app:cornerRadius="8dp"
+                app:backgroundTint="#A61010"
+                app:iconGravity="end"
+                app:iconPadding="8dp"/>
 
         </LinearLayout>
     </ScrollView>

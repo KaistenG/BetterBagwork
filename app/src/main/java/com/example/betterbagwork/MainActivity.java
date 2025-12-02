@@ -3,18 +3,18 @@ package com.example.betterbagwork;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private BottomNavigationView bottomNavigationView;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private Toolbar toolbar;
+    private ImageView btnMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,20 +39,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         checkUserLogin();
 
         // Views initialisieren
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        btnMenu = findViewById(R.id.btnMenu);
 
-        // Drawer Toggle (Hamburger-Icon)
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+        // Hamburger Menu Click (öffnet Drawer rechts)
+        btnMenu.setOnClickListener(v -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
 
         // Drawer Menu Listener
         navigationView.setNavigationItemSelectedListener(this);
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showLogoutDialog() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Ausloggen?")
                 .setMessage("Möchtest du dich wirklich ausloggen?")
                 .setPositiveButton("Ja", (dialog, which) -> {
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showImpressum() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Impressum")
                 .setMessage("Better Bagwork\n\nEntwickelt von: [Dein Name]\n\nVersion: 1.0")
                 .setPositiveButton("OK", null)
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showAbout() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Über Better Bagwork")
                 .setMessage("Better Bagwork ist deine App für effektives Bagwork-Training.\n\n" +
                         "Erstelle Kombinationen, plane Workouts und trainiere strukturiert!")

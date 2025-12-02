@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -45,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#2a2a2a"
+        android:background="@drawable/combination_box_background"
         android:padding="24dp"
         android:gravity="center"
         android:layout_marginBottom="48dp">
@@ -83,23 +84,35 @@
         android:orientation="horizontal"
         android:gravity="center">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPauseResume"
             android:layout_width="0dp"
-            android:layout_height="80dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="56dp"
+            android:layout_marginEnd="32dp"
             android:layout_weight="1"
-            android:text="⏸ Pause"
-            android:textSize="20sp"
-            android:layout_marginEnd="8dp"/>
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_pause"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="56dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStop"
             android:layout_width="0dp"
-            android:layout_height="80dp"
+            android:layout_height="70dp"
             android:layout_weight="1"
-            android:text="⏹ Stop"
-            android:textSize="20sp"
-            android:layout_marginStart="8dp"/>
-    </LinearLayout>
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="56dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:icon="@drawable/ic_stop"
+            app:iconGravity="textStart"
+            app:iconSize="56dp"
+            app:iconPadding="0dp"
+            app:cornerRadius="16dp"/>
 
+    </LinearLayout>
 </LinearLayout>

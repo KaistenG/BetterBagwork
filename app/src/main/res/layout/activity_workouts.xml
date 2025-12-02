@@ -17,7 +17,7 @@
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="← Zurück"
+            android:text="Zurück"
             style="?android:attr/buttonBarButtonStyle"/>
 
         <TextView
@@ -39,7 +39,7 @@
         android:id="@+id/btnCreateWorkout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="+ Neues Workout"
+        android:text="Neues Workout hinzufügen"
         android:layout_marginBottom="16dp"/>
 
     <!-- RecyclerView für Workouts -->

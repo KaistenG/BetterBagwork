@@ -1,29 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?android:attr/colorBackground">
 
-    <!-- Button oben: Neue Kombination -->
-    <Button
-        android:id="@+id/btnCreateCombination"
+    <!-- Header mit Titel und Add-Button -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="+ Neue Kombination erstellen"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:paddingVertical="16dp"
-        style="@style/Widget.MaterialComponents.Button" />
+        android:padding="16dp"
+        android:background="@color/surface_dark">
+
+        <!-- Titel "Kombinationen" -->
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Kombinationen"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnCreateCombination"/>
+
+        <!-- Add Button (Icon only) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCreateCombination"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            android:padding="0dp"
+            android:contentDescription="Neue Kombination erstellen"
+            style="@style/Widget.Material3.Button.IconButton"
+            app:icon="@drawable/ic_add"
+            app:iconSize="28dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconTint="@color/primary_red"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Trennlinie -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginHorizontal="16dp"
-        android:background="?android:attr/listDivider" />
+        android:background="@color/primary_red"
+        android:alpha="0.2"/>
 
     <!-- RecyclerView für Kombinationen -->
     <androidx.recyclerview.widget.RecyclerView

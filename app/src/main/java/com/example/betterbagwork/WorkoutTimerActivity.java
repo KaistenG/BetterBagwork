@@ -4,9 +4,11 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
@@ -21,7 +23,7 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     private static final String TAG = "WorkoutTimer";
 
     private TextView txtTimer, txtCurrentRound, txtCurrentCombination, txtStatus;
-    private Button btnPauseResume, btnStop;
+    private MaterialButton btnPauseResume, btnStop;
 
     private Workout workout;
     private List<Combination> combinations;
@@ -319,12 +321,20 @@ public class WorkoutTimerActivity extends AppCompatActivity {
 
     private void togglePauseResume() {
         isPaused = !isPaused;
-        btnPauseResume.setText(isPaused ? "▶ Resume" : "⏸ Pause");
-        audioAnnouncer.announceText(isPaused ? "Paused" : "Continue", () -> {});
+
+        if (isPaused) {
+            // Pausiert → Play-Icon anzeigen
+            btnPauseResume.setIcon(getDrawable(R.drawable.ic_play));
+            btnPauseResume.setContentDescription("Resume");
+        } else {
+            // Läuft → Pause-Icon anzeigen
+            btnPauseResume.setIcon(getDrawable(R.drawable.ic_pause));
+            btnPauseResume.setContentDescription("Pause");
+        }
     }
 
     private void showStopConfirmDialog() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this) //damit der Hintergrund des Abbrechdialogfeldes sich dem Theme anpasst.
                 .setTitle("Workout abbrechen?")
                 .setMessage("Wirklich beenden?")
                 .setPositiveButton("Ja", (d, w) -> finish())
@@ -335,7 +345,7 @@ public class WorkoutTimerActivity extends AppCompatActivity {
     private void finishWorkout() {
         audioAnnouncer.announceText("Workout complete!", () -> {});
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)  // anpassen des Themes
                 .setTitle("Workout fertig!")
                 .setMessage("Du hast " + workout.getNumberOfRounds() + " Runden absolviert!")
                 .setPositiveButton("OK", (d, w) -> finish())

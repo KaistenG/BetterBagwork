@@ -28,4 +28,7 @@
     <color name="success">#4CAF50</color>
     <color name="error">#F44336</color>
     <color name="warning">#FF9800</color>
+
+    <!-- dämliche Ripple Effekt -->
+    <color name="ripple_red">#10E53935</color> <!-- Helleres Rot, 25% transparent -->
 </resources>

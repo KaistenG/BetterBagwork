@@ -5,9 +5,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +54,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
 
     class WorkoutViewHolder extends RecyclerView.ViewHolder {
         TextView txtWorkoutName, txtRounds, txtRoundTime, txtTotalTime;
-        Button btnStart, btnDelete;
+        MaterialButton btnStart, btnEdit, btnDelete;
 
         public WorkoutViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,13 +63,14 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
             txtRoundTime = itemView.findViewById(R.id.txtRoundTime);
             txtTotalTime = itemView.findViewById(R.id.txtTotalTime);
             btnStart = itemView.findViewById(R.id.btnStartWorkout);
+            btnEdit = itemView.findViewById(R.id.btnEditWorkout);
             btnDelete = itemView.findViewById(R.id.btnDeleteWorkout);
         }
 
         public void bind(Workout workout) {
             txtWorkoutName.setText(workout.getName());
             txtRounds.setText(workout.getNumberOfRounds() + " Runden");
-            txtRoundTime.setText("Rundenzeit: " + workout.getRoundTimeFormatted());
+            txtRoundTime.setText(workout.getRoundTimeFormatted());
             txtTotalTime.setText("Gesamt: " + workout.getTotalDurationFormatted());
 
             // Start Button
@@ -74,6 +78,12 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
                 if (listener != null) {
                     listener.onWorkoutClick(workout);
                 }
+            });
+
+            // Edit Button (Platzhalter für später)
+            btnEdit.setOnClickListener(v -> {
+                // TODO: Edit-Funktion später implementieren
+                Toast.makeText(v.getContext(), "Bearbeiten kommt bald!", Toast.LENGTH_SHORT).show();
             });
 
             // Delete Button

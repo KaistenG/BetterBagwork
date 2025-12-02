@@ -4,57 +4,77 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/surface_dark">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="6dp">
 
-        <!-- Name und Anzahl in einer Zeile -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Name der Kombination -->
+        <TextView
+            android:id="@+id/txtCombinationName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:text="Kombination Name"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/txtMoveCount"/>
 
-            <TextView
-                android:id="@+id/txtCombinationName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Kombination Name"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/txtMoveCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="4 Schläge"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"/>
-        </LinearLayout>
+        <!-- Anzahl Schläge -->
+        <TextView
+            android:id="@+id/txtMoveCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4 Schläge"
+            android:textSize="18sp"
+            android:textColor="@color/text_secondary"
+            app:layout_constraintTop_toTopOf="@id/txtCombinationName"
+            app:layout_constraintBottom_toBottomOf="@id/txtCombinationName"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <!-- Schlag-Reihenfolge -->
         <TextView
             android:id="@+id/txtCombinationMoves"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Jab → Cross → Left Hook"
+            android:text="Jab - Cross - Left Hook"
             android:textSize="14sp"
-            android:layout_marginBottom="12dp"/>
+            android:textColor="@color/text_secondary"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@id/txtCombinationName"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Delete Button -->
-        <Button
+        <!-- Delete Button (unten rechts) -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDeleteCombination"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Löschen"
-            style="?android:attr/buttonBarButtonStyle"/>
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="Kombination löschen"
+            android:inset="0dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            android:padding="0dp"
+            app:cornerRadius="8dp"
+            app:icon="@drawable/ic_delete"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="18dp"
+            app:iconTint="@color/error"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtCombinationMoves" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

@@ -5,15 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
+    <!-- Custom Toolbar mit Gradient -->
+    <include
         android:id="@+id/toolbar"
+        layout="@layout/toolbar_create_workout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:elevation="4dp"
-        app:title="Neues Workout" />
+        android:layout_height="?attr/actionBarSize"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -33,6 +30,7 @@
                 android:text="Workout Name:"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"/>
 
             <EditText
@@ -41,6 +39,8 @@
                 android:layout_height="wrap_content"
                 android:hint="z.B. Mittags-Training"
                 android:inputType="text"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
                 android:layout_marginBottom="24dp"/>
 
             <!-- Kombinationen auswählen -->
@@ -50,6 +50,7 @@
                 android:text="Kombinationen auswählen:"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -57,7 +58,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginBottom="24dp"
-                android:background="@android:drawable/editbox_background"/>
+                android:padding="4dp"
+                android:scrollbars="vertical"
+                android:background="@drawable/combination_selector_background"/>
 
             <!-- Rundenzeit -->
             <TextView
@@ -66,6 +69,7 @@
                 android:text="Rundenzeit:"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"/>
 
             <LinearLayout
@@ -78,25 +82,29 @@
                 <NumberPicker
                     android:id="@+id/pickerRoundMinutes"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:theme="@style/NumberPickerTheme"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=" Min "
                     android:textSize="16sp"
+                    android:textColor="@color/text_primary"
                     android:layout_marginHorizontal="8dp"/>
 
                 <NumberPicker
                     android:id="@+id/pickerRoundSeconds"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:theme="@style/NumberPickerTheme"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=" Sek"
                     android:textSize="16sp"
+                    android:textColor="@color/text_primary"
                     android:layout_marginStart="8dp"/>
             </LinearLayout>
 
@@ -107,6 +115,7 @@
                 android:text="Anzahl Runden:"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"/>
 
             <NumberPicker
@@ -114,6 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:theme="@style/NumberPickerTheme"
                 android:layout_marginBottom="24dp"/>
 
             <!-- Ansage-Intervall -->
@@ -123,6 +133,7 @@
                 android:text="Ansage-Intervall (Sekunden):"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"/>
 
             <NumberPicker
@@ -130,6 +141,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:theme="@style/NumberPickerTheme"
                 android:layout_marginBottom="24dp"/>
 
             <!-- Pausenzeit -->
@@ -139,6 +151,7 @@
                 android:text="Pause zwischen Runden:"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"/>
 
             <LinearLayout
@@ -151,25 +164,29 @@
                 <NumberPicker
                     android:id="@+id/pickerRestMinutes"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:theme="@style/NumberPickerTheme"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=" Min "
                     android:textSize="16sp"
+                    android:textColor="@color/text_primary"
                     android:layout_marginHorizontal="8dp"/>
 
                 <NumberPicker
                     android:id="@+id/pickerRestSeconds"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:theme="@style/NumberPickerTheme"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=" Sek"
                     android:textSize="16sp"
+                    android:textColor="@color/text_primary"
                     android:layout_marginStart="8dp"/>
             </LinearLayout>
 
@@ -180,6 +197,7 @@
                 android:text="Startverzögerung:"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp"/>
 
             <NumberPicker
@@ -187,16 +205,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:theme="@style/NumberPickerTheme"
                 android:layout_marginBottom="24dp"/>
 
             <!-- Speichern Button -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveWorkout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Workout speichern"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_gravity="center"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Speichern"
                 android:textStyle="bold"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                app:icon="@drawable/ic_save"
+                app:iconSize="24dp"
+                app:iconTint="@color/black"
+                app:cornerRadius="8dp"
+                app:backgroundTint="#A61010"
+                app:iconGravity="end"
+                app:iconPadding="8dp"/>
 
         </LinearLayout>
     </ScrollView>
