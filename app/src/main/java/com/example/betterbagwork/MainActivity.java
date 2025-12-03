@@ -108,13 +108,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (itemId == R.id.drawer_logout) {
             showLogoutDialog();
+            // Drawer bleibt offen!
         } else if (itemId == R.id.drawer_impressum) {
             showImpressum();
+            // Drawer bleibt offen!
         } else if (itemId == R.id.drawer_about) {
             showAbout();
+            // Drawer bleibt offen!
         }
 
-        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -126,23 +128,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     FirebaseHelper.logout(MainActivity.this);
                 })
                 .setNegativeButton("Nein", null)
+                .setOnDismissListener(dialog -> {
+                    // Deselektiere alle Items
+                    for (int i = 0; i < navigationView.getMenu().size(); i++) {
+                        navigationView.getMenu().getItem(i).setChecked(false);
+                    }
+                })
                 .show();
     }
 
     private void showImpressum() {
         new MaterialAlertDialogBuilder(this)
                 .setTitle("Impressum")
-                .setMessage("Better Bagwork\n\nEntwickelt von: [Dein Name]\n\nVersion: 1.0")
+                .setMessage("Better Bagwork\n\nEntwickelt von: Kai Steen\n\nVersion: 1.0")
                 .setPositiveButton("OK", null)
+                .setOnDismissListener(dialog -> {
+                    // Deselektiere alle Items
+                    for (int i = 0; i < navigationView.getMenu().size(); i++) {
+                        navigationView.getMenu().getItem(i).setChecked(false);
+                    }
+                })
                 .show();
     }
 
     private void showAbout() {
         new MaterialAlertDialogBuilder(this)
                 .setTitle("Über Better Bagwork")
-                .setMessage("Better Bagwork ist deine App für effektives Bagwork-Training.\n\n" +
-                        "Erstelle Kombinationen, plane Workouts und trainiere strukturiert!")
+                .setMessage("Better Bagwork ist eine App für effektives Heavybag-Training.\n\n" +
+                        "Erstelle eigene Kombinationen, plane Workouts nach deinen Zielen und trainiere auch alleine effizient am Heavybag!\n\n" +
+                        "Ooouuuu Weeee")
                 .setPositiveButton("OK", null)
+                .setOnDismissListener(dialog -> {
+                    // Deselektiere alle Items
+                    for (int i = 0; i < navigationView.getMenu().size(); i++) {
+                        navigationView.getMenu().getItem(i).setChecked(false);
+                    }
+                })
                 .show();
     }
 

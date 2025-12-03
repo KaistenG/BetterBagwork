@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/card_background">
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/surface_dark">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp">
 
-        <!-- Workout Name -->
+        <!-- Zeile 1: Workout Name + Status Badge -->
         <TextView
             android:id="@+id/txtWorkoutName"
             android:layout_width="0dp"
@@ -29,7 +32,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/txtStatus"/>
 
-        <!-- Status Badge (Abgeschlossen/Abgebrochen) -->
         <TextView
             android:id="@+id/txtStatus"
             android:layout_width="wrap_content"
@@ -39,34 +41,39 @@
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:background="@drawable/status_badge_completed"
-            android:padding="6dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:layout_marginStart="8dp"
             app:layout_constraintTop_toTopOf="@id/txtWorkoutName"
             app:layout_constraintBottom_toBottomOf="@id/txtWorkoutName"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Datum -->
+        <!-- Zeile 2: Datum -->
+
+        <!-- Zeile 3: Runden + Dauer + Delete Button -->
         <TextView
             android:id="@+id/txtDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="01.12.2024 18:30"
-            android:textSize="14sp"
             android:textColor="@color/text_secondary"
-            android:layout_marginTop="4dp"
-            app:layout_constraintTop_toBottomOf="@id/txtWorkoutName"
-            app:layout_constraintStart_toStartOf="parent"/>
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtWorkoutName" />
 
-        <!-- Info-Zeile: Runden & Dauer -->
         <TextView
             android:id="@+id/txtRounds"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="5/5 Runden"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textColor="@color/text_secondary"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             app:layout_constraintTop_toBottomOf="@id/txtDate"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
@@ -74,18 +81,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="19:00 Min"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textColor="@color/text_secondary"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
             app:layout_constraintTop_toTopOf="@id/txtRounds"
             app:layout_constraintBottom_toBottomOf="@id/txtRounds"
             app:layout_constraintStart_toEndOf="@id/txtRounds"/>
 
-        <!-- Delete Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDeleteHistory"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:insetLeft="0dp"
@@ -94,14 +100,14 @@
             android:contentDescription="Löschen"
             style="@style/Widget.Material3.Button.IconButton"
             app:icon="@drawable/ic_delete"
-            app:iconSize="18dp"
+            app:iconSize="16dp"
             app:iconGravity="textStart"
             app:iconPadding="0dp"
             app:iconTint="@color/error"
-            android:layout_marginTop="4dp"
-            app:layout_constraintTop_toBottomOf="@id/txtRounds"
+            app:layout_constraintTop_toTopOf="@id/txtRounds"
+            app:layout_constraintBottom_toBottomOf="@id/txtRounds"
             app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

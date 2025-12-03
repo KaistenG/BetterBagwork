@@ -9,8 +9,9 @@
     <!-- Header mit Titel -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:layout_height="56dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:background="@color/surface_dark">
 
         <!-- Titel "History" -->
@@ -18,7 +19,7 @@
             android:id="@+id/txtTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Workout History"
+            android:text="Workout Historie"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
@@ -41,7 +42,8 @@
         android:id="@+id/recyclerViewHistory"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
-        android:clipToPadding="false"/>
+        android:padding="4dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"/>
 
 </LinearLayout>
