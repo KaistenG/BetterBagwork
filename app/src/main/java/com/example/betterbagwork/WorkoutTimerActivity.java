@@ -199,11 +199,11 @@ public class WorkoutTimerActivity extends AppCompatActivity {
 
         // Audio: "Round X"
         audioAnnouncer.announceRound(currentRound, () -> {
-            // Nach Ansage → Gong
+            // Nach Ansage, Gong
             handler.postDelayed(() -> {
                 if (openingBellPlayer != null) openingBellPlayer.start();
 
-                // Nach Gong → Kombination + Timer
+                // Nach Gong, Kombination + Timer
                 handler.postDelayed(() -> {
                     announceRandomCombination();
                     startTimer();
@@ -335,11 +335,11 @@ public class WorkoutTimerActivity extends AppCompatActivity {
         isPaused = !isPaused;
 
         if (isPaused) {
-            // Pausiert → Play-Icon anzeigen
+            // Pausiert - Play-Icon anzeigen
             btnPauseResume.setIcon(getDrawable(R.drawable.ic_play));
             btnPauseResume.setContentDescription("Resume");
         } else {
-            // Läuft → Pause-Icon anzeigen
+            // Läuft - Pause-Icon anzeigen
             btnPauseResume.setIcon(getDrawable(R.drawable.ic_pause));
             btnPauseResume.setContentDescription("Pause");
         }
