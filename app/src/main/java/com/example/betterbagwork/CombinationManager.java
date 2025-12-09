@@ -122,7 +122,7 @@ public class CombinationManager {
                 });
     }
 
-    // Hilfsmethode: User ID holen
+    // Hilfsmethode zum User ID holen
     private String getUserId() {
         return auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
     }
